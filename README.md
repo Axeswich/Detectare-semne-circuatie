@@ -5,3 +5,6 @@
 3.Fisierul index.html este folosit pentru creearea site-ului web, care afiseaza un panel unde se poate incarca o poza(poate sa aiba orice format), iar site-ul, folosind fisierle de mai sus, va verifica, iar dupa va afisa in scris ce semn este.
 
 In viitor, dorim sa implementam aplicatia noastra, ca sa o putem integra in industria automotiva.Scopul aplicatiei noastre este sa minimizam accidentele si sa facem condusul cat mai usor pentru toata lumea.
+
+Librarii folosite:Tensorflow, Flask, Keras, Sklearn, Numpy, Pillow.
+Link catre Dataset:https://www.kaggle.com/datasets/meowmeowmeowmeowmeow/gtsrb-german-traffic-sign

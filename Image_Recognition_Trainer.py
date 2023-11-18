@@ -6,15 +6,21 @@ from tensorflow.keras.utils import to_categorical
 from tensorflow.keras.layers import Conv2D, Dense, Flatten, MaxPool2D, Dropout
 from tensorflow.keras.models import Sequential
 
+# Defines paths for the training and test datasets.
+
 data_dir = 'C:/Users/Stefan/Documents/GTSRB'
-train_path = 'C:/Users/Stefan/Documents/GTSRB/Train'
-test_path = 'C:/Users/Stefan/Documents/GTSRB'
-IMG_HEIGHT = 30
-IMG_WIDTH = 30
-channels = 3
+train_path = os.path.join(data_dir, 'Train')
+test_path = os.path.join(data_dir, 'Test')
+
+# Sets constants such as target image size, number of channels, and the number of categories (traffic sign classes).
+
+TARGET_SIZE = (30, 30)
+IMG_HEIGHT, IMG_WIDTH = TARGET_SIZE
+CHANNELS = 3
 NUM_CATEGORIES = len(os.listdir(train_path))
 
-# Label Overview
+# Defines a dictionary classes mapping class indices to traffic sign descriptions.
+
 classes = { 0: 'Limita de viteza (20km/h)',
             1: 'Limita de viteza (30km/h)',
             2: 'Limita de viteza (50km/h)',
@@ -59,21 +65,25 @@ classes = { 0: 'Limita de viteza (20km/h)',
             41: 'De acum se poate depasii',
             42: 'De acum pot depasii vehiculele de peste 3.5 tone'}
 
+# Counts the number of images in each class and sorts the classes based on the number of images.
+
 folders = os.listdir(train_path)
 
 train_number = []
 class_num = []
 
-for folder in folders:
-    train_files = os.listdir(train_path + '/' + folder)
+for index, folder in enumerate(folders):
+    train_files = os.listdir(os.path.join(train_path, folder))
     train_number.append(len(train_files))
-    class_num.append(classes[int(folder)])
+    class_num.append(classes[index])
 
 # Sorting the dataset on the basis of number of images in each class
 zipped_lists = zip(train_number, class_num)
 sorted_pairs = sorted(zipped_lists)
 tuples = zip(*sorted_pairs)
 train_number, class_num = [list(tuple) for tuple in tuples]
+
+# Defines a function load_data to load images and labels from the dataset.
 
 
 def load_data(data_dir):
@@ -82,20 +92,23 @@ def load_data(data_dir):
     for category in range(NUM_CATEGORIES):
         categories = os.path.join(data_dir, str(category))
         for img in os.listdir(categories):
-            img = load_img(os.path.join(categories, img), target_size=(30, 30))
+            img = load_img(os.path.join(categories, img), target_size=TARGET_SIZE)
             image = img_to_array(img)
             images.append(image)
             labels.append(category)
 
     return images, labels
 
+# Calls load_data to load images and labels from the training dataset.
+
 
 images, labels = load_data(train_path)
 
-# One hot encoding the labels
+# Performs one-hot encoding on the labels.
 labels = to_categorical(labels)
 
-# Splitting the dataset into training and test set
+# Splits the dataset into training and testing sets using train_test_split.
+
 x_train, x_test, y_train, y_test = train_test_split(
                                                     np.array(images),
                                                     labels,
@@ -110,6 +123,11 @@ print("X_train.shape", x_train.shape)
 print("X_valid.shape", x_test.shape)
 print("y_train.shape", y_train.shape)
 print("y_valid.shape", y_test.shape)
+
+# Defines a Sequential model.
+# Adds convol layers with activation functions (ReLU),max-pooling layers,and dropout layers to prevent overfitting.
+# Adds fully connected (dense) layers with ReLU activation.
+# Uses softmax activation in the output layer with 43 units (number of traffic sign classes).
 
 model = Sequential()
 model.add(Conv2D(filters=16, kernel_size=(3, 3), activation="relu", input_shape=(IMG_HEIGHT, IMG_WIDTH, 3)))
@@ -127,11 +145,15 @@ model.add(Dense(43, activation="softmax"))
 
 model.summary()
 
+# Compiles the model using categorical crossentropy loss, the Adam optimizer, and accuracy as the metric.
+
 model.compile(
     loss='categorical_crossentropy',
     optimizer='adam',
     metrics=['accuracy']
 )
+
+# Defines an image data generator (aug) for data augmentation during training.
 
 aug = ImageDataGenerator(
     rotation_range=10,
@@ -143,9 +165,11 @@ aug = ImageDataGenerator(
     vertical_flip=False,
     fill_mode="nearest")
 
+# Another generator (aug_validation) is used for the validation data.
+
 aug_validation = ImageDataGenerator()
 
-model_save_path = 'C:/Users/Stefan/Documents/GTSRB/trained_model.h5'
+model_save_path = os.path.join(data_dir, 'trained_model.h5')
 
 EPOCHS = 30
 history = model.fit(
@@ -154,12 +178,18 @@ history = model.fit(
     epochs=EPOCHS
 )
 
+# Saves the trained model to a file (trained_model.h5).
+
 model.save(model_save_path)
 print(f"Model saved to {model_save_path}")
+
+# Evaluates the model on the test set and prints the accuracy.
 
 loss, accuracy = model.evaluate(x_test, y_test)
 
 print('test set accuracy: ', accuracy * 100)
+
+# Plots the training and validation accuracy and loss over epochs.
 
 acc = history.history['acc']
 val_acc = history.history['val_acc']

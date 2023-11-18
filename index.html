@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Upload Traffic Sign Image</title>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background: radial-gradient(circle, dimgray, #333333);
+            color: #ffffff;
+        }
+
+        #container {
+            text-align: center;
+            flex-grow: 1;
+        }
+
+        #logo {
+            margin-bottom: 20px;
+        }
+
+        #logo img {
+            max-width: 40%;
+            height: auto;
+            border-radius: 50%;
+        }
+
+        h1 {
+            color: darkgray;
+            background-color: #333333;
+            padding: 10px;
+            border-color: black;
+            border-style: solid;
+            border-width: 4px;
+            border-radius: 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        #upload-form {
+            margin-top: 20px;
+        }
+
+        input[type="file"], input[type="button"] {
+            border-radius: 20px;
+            padding: 10px;
+            border-color: black;
+            border-style: solid;
+            border-width: 4px;
+            background-color: #333333;
+            color: darkgray;
+            cursor: pointer;
+        }
+
+        #result {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+
+        #creators {
+            margin-top: 20px;
+        }
+    </style>
+    <script>
+         function uploadFile() {
+            var formData = new FormData(document.getElementById('upload-form'));
+
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        var response = JSON.parse(xhr.responseText);
+                        displayResult(response);
+                    } else {
+                        displayError(xhr.status);
+                    }
+                }
+            };
+
+            xhr.open('POST', '/predict', true);
+            xhr.send(formData);
+        }
+
+        function displayResult(response) {
+            var resultElement = document.getElementById('result');
+            resultElement.innerHTML = 'Prediction: ' + response.prediction;
+        }
+
+        function displayError(status) {
+            var resultElement = document.getElementById('result');
+            resultElement.innerHTML = 'Error: ' + status;
+        }
+    </script>
+</head>
+<body>
+    <div id="container">
+        <div id="logo">
+            <!-- Add your logo here -->
+            <img src="/static/byiteslogo.png" alt="Logo">
+        </div>
+        <h1>Upload Traffic Sign Image</h1>
+        <form id="upload-form" enctype="multipart/form-data">
+            <input type="file" name="file" id="file-input">
+            <input type="button" value="Upload" onclick="uploadFile()">
+        </form>
+        <div id="result"></div>
+    </div>
+    <div id="creators">
+        <p>Creators: Picu Stefan, Emilian Baltesiu, Mihaescu Mihai, Barnu Alexandru, Armean Andrei</p>
+    </div>
+</body>
+</html>

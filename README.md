@@ -7,4 +7,5 @@
 In viitor, dorim sa implementam aplicatia noastra, ca sa o putem integra in industria automotiva.Scopul aplicatiei noastre este sa minimizam accidentele si sa facem condusul cat mai usor pentru toata lumea.
 
 Librarii folosite:Tensorflow, Flask, Keras, Sklearn, Numpy, Pillow.
+Limbaje folosite:HTML, Python
 Link catre Dataset:https://www.kaggle.com/datasets/meowmeowmeowmeowmeow/gtsrb-german-traffic-sign

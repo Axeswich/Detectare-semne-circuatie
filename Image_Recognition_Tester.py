@@ -183,5 +183,6 @@ def predict():
 
 # Runs the Flask app in debug mode if the script is executed directly.
 
+
 if __name__ == '__main__':
     app.run(debug=True)
